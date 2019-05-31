@@ -2,10 +2,17 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { APP_SECRET, getUserId } = require('../utils')
 
-function post(parent, args, context) {
+//extracting the userId from the Authorization header of the request and use it to directly connect it with the Link that is created
+function post(parent, {url, description}, context) {
+  const userId = getUserId(context)
   return context.prisma.createLink({
-    url: args.url,
-    description: args.description,
+    url, 
+    description,
+    postedBy: {
+      connect: {
+        id: userId
+      }
+    }
   })
 }
 
